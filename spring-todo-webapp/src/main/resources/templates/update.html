@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhml" xmlns:th="http://www.thymeleaf.org">
+    
+    <head>
+        <meta charset="UTF-8">
+        <title>Todo Web Application</title>
+    </head>
+    <body>
+		<form method="post" th:action="@{/savetodo}" th:object="${todo}">
+			<input type="hidden" th:field="*{id}" class="form-control">
+			<input type="text" th:field="*{firstName}" class="form-control" id="firstNameInput"  placeholder="type your first name">
+			<input type="text" th:field="*{lastName}" class="form-control" id="lastNameInput"  placeholder="type your last name">
+			<input type="date" th:field="*{begindate}" class="form-control" id="begindateInput"  >
+			<input type="date" th:field="*{enddate}" class="form-control" id="enddateInput"  >
+			<input type="text" th:field="*{todo}" class="form-control" id="todoInput"  placeholder="type your todo">
+			<button type="submit" >Modifier</button>
+					</form>    
+	</body>
+</html>

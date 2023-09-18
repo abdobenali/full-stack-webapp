@@ -1,12 +1,23 @@
 package com.springtodowebapp.app.repository;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springtodowebapp.app.CustomProperties;
 import com.springtodowebapp.app.model.Todo;
 
@@ -24,7 +35,7 @@ public class Todorepository {
 	public List<Todo> getTodos(){
 		String baseApiUrl = props.getApiUrl();
 		String getTodosUri = "/todos";
-		//spring webClient
+		
 		WebClient.Builder builder = WebClient.builder();
 		Flux<Todo> todoFlux = builder
 				.baseUrl(baseApiUrl)
@@ -41,32 +52,66 @@ public class Todorepository {
 
 	}
 	public Todo saveTodo(Todo todo) {
-		String baseApiUrl = props.getApiUrl();
-		String getTodosUri = "/todo";
-		WebClient.Builder builder = WebClient.builder();
-		Todo savedTodo = builder
-        .baseUrl(baseApiUrl) 
-        .build()
-        .post()
-        .uri(getTodosUri) 
-        .body(Mono.just(todo), Todo.class)
-        .retrieve()
-        .bodyToMono(Todo.class)
-        .block();
-		return savedTodo;
+		try {
+            String POST_URL = "http://localhost:9000/todo";
+            URI postURI = new URI(POST_URL);
+            ObjectMapper objectMapper = new ObjectMapper();
+            String postBody = objectMapper.writeValueAsString(todo);
+            
+            HttpClient httpClient = HttpClient.newHttpClient();
+
+            HttpRequest httpRequestPost = HttpRequest.newBuilder()
+                    .uri(postURI)
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(postBody))
+                    .build();
+
+            HttpResponse<String> postResponse = httpClient.send(httpRequestPost, HttpResponse.BodyHandlers.ofString());
+            System.out.println(postResponse.body());
+        } catch (URISyntaxException | IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+		return todo;
+	}
+	public Todo updateTodo(Todo todo) {
+		try {
+            String PUT_URL = "http://localhost:9000/todo/"+todo.getId();
+            URI putURI = new URI(PUT_URL);
+            ObjectMapper objectMapper = new ObjectMapper();
+            String postBody = objectMapper.writeValueAsString(todo);
+            
+            HttpClient httpClient = HttpClient.newHttpClient();
+
+            HttpRequest httpRequestPost = HttpRequest.newBuilder()
+                    .uri(putURI)
+                    .header("Content-Type", "application/json")
+                    .PUT(HttpRequest.BodyPublishers.ofString(postBody))
+                    .build();
+
+            HttpResponse<String> postResponse = httpClient.send(httpRequestPost, HttpResponse.BodyHandlers.ofString());
+            System.out.println(postResponse.body());
+        } catch (URISyntaxException | IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+		return todo;
 	}
 	public void deleteTodo(final Long id) {
-		String baseApiUrl = props.getApiUrl();
-		String getTodosUri = "/todo/{id}";
-		WebClient.Builder builder = WebClient.builder();
-		
-		builder
-        .baseUrl(baseApiUrl) 
-        .build()
-        .delete()
-        .uri(getTodosUri, id) 
-        .retrieve()
-        .bodyToMono(Void.class);
+		try {
+            String DELETE_URL = "http://localhost:9000/todo/"+id;
+            URI deleteURI = new URI(DELETE_URL);
+            HttpClient httpClient = HttpClient.newHttpClient();
+
+            HttpRequest httpRequestPost = HttpRequest.newBuilder()
+                    .uri(deleteURI)
+                    .header("Content-Type", "application/json")
+                    .DELETE()
+                    .build();
+
+            HttpResponse<String> postResponse = httpClient.send(httpRequestPost, HttpResponse.BodyHandlers.ofString());
+            System.out.println(postResponse.body());
+        } catch (URISyntaxException | IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
 	}
 	public Optional<Todo> getTodo(final Long id) {
 		String baseApiUrl = props.getApiUrl();
@@ -74,12 +119,13 @@ public class Todorepository {
 		WebClient.Builder builder = WebClient.builder();
 		
 		Mono<Todo> todo = builder
-        .baseUrl(baseApiUrl) // Remplacez par l'URL de l'API
+        .baseUrl(baseApiUrl) 
         .build()
         .get()
-        .uri(getTodosUri, id) // Remplacez par l'API endpoint réel pour obtenir un "Todo" par ID
+        .uri(getTodosUri, id) 
         .retrieve()
         .bodyToMono(Todo.class);
+		
 		return todo.blockOptional();
 	}
 

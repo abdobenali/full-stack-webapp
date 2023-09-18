@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhml" xmlns:th="http://www.thymeleaf.org">
+    
+    <head>
+        <meta charset="UTF-8">
+        <title>Todo Web Application</title>
+    </head>
+    <body>
+		<form method="post" action="/todo">
+    		<input id="firstName" name="firstName" type="text"  placeholder="First name" >
+    		<input id="lastName" name="lastName" type="text"  placeholder="Last name" >
+    		<input id="begindate" name="begindate" type="date"  placeholder="Begin date">				     	
+    		<input id="enddate" name="enddate" type="date"  placeholder="End date">
+    		<input id="todo" name="todo" type="text"  placeholder="todo">
+    		<button type="submit" >Add todo</button>
+		</form>
+        <h2 class="h2">Todos</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Begin date</th>
+                    <th>End date</th>
+                    <th>Todo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${todos.empty}">
+                    <td colspan="3">No todos in the data base</td>
+                </tr>
+                <tr th:each="todo: ${todos}">
+                    <td><span th:text="${todo.firstName}"> firstName </span></td>
+                    <td><span th:text="${todo.lastName}"> lastName </span></td>
+                    <td><span th:text="${todo.begindate}"> begindate </span></td>
+                    <td><span th:text="${todo.enddate}"> lastName </span></td>
+                    <td><span th:text="${todo.todo}"> todo </span></td>
+                    <td> 
+							<a th:href="@{/updatetodo/{id}(id=${todo.id})}">Update</a> 	
+							<a th:href="@{/deletetodo/{id}(id=${todo.id})}">Delete</a> 		
+					</td> 
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>

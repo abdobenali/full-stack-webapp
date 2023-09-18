@@ -24,7 +24,10 @@ public class Todoservice {
 		Todo savedTodo = todorepository.saveTodo(todo);
 		return(savedTodo);
 	}
-	
+	public Todo updateTodo(Todo todo) {
+		Todo savedTodo = todorepository.updateTodo(todo);
+		return(savedTodo);
+	}
 	public void deleteTodo(final Long id) {
 		todorepository.deleteTodo(id);
 	}

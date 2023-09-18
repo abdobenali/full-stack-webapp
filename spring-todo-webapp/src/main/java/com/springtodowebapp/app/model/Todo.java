@@ -9,7 +9,11 @@ public class Todo {
 	    private String lastName;    
 	    private Date begindate;
 	    private Date enddate;
-	    public Long getId() {
+	   
+	    private String todo;
+		
+
+		public Long getId() {
 			return id;
 		}
 		public void setId(Long id) {
@@ -45,5 +49,5 @@ public class Todo {
 		public void setTodo(String todo) {
 			this.todo = todo;
 		}
-		private String todo;
+		
 }
